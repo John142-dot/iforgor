@@ -1,0 +1,302 @@
+-- DI NOT STEAL ONLY IF PERMISSION
+  -- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomNotificationGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Function to make a frame draggable
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging then
+            update(input)
+        end
+    end)
+end
+
+-- Function to create a notification with a timer
+local function createNotification(message, duration)
+    -- Create a Frame for the notification
+    local notificationFrame = Instance.new("Frame")
+    notificationFrame.Size = UDim2.new(0.4, 0, 0.15, 0)
+    notificationFrame.Position = UDim2.new(0.5, 0, 1.2, 0)  -- Start position (off-screen)
+    notificationFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10) -- Dark black background
+    notificationFrame.BackgroundTransparency = 0.3
+    notificationFrame.BorderSizePixel = 0
+    notificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    notificationFrame.Position = UDim2.new(0.5, 0, 1, 0)
+    notificationFrame.Parent = screenGui
+
+    -- Make the notification draggable
+    makeDraggable(notificationFrame)
+
+    -- Add retro style background
+    local retroBg = Instance.new("ImageLabel")
+    retroBg.Size = UDim2.new(1, 0, 1, 0)
+    retroBg.BackgroundTransparency = 1
+    retroBg.Image = "rbxassetid://18511342770" -- Retro-style image
+    retroBg.ImageTransparency = 0.7
+    retroBg.Parent = notificationFrame
+
+    -- Add neon blue border
+    local neonBorder = Instance.new("Frame")
+    neonBorder.Size = UDim2.new(1, 0, 1, 0)
+    neonBorder.BorderSizePixel = 6
+    neonBorder.BorderColor3 = Color3.fromRGB(0, 170, 255)  -- Neon blue color
+    neonBorder.BackgroundTransparency = 1
+    neonBorder.ZIndex = 2
+    neonBorder.Parent = notificationFrame
+
+    -- Add rounded corners
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.2, 0)
+    corner.Parent = notificationFrame
+
+    -- Create a Frame for the timer
+    local timerFrame = Instance.new("Frame")
+    timerFrame.Size = UDim2.new(1, 0, 0.1, 0)
+    timerFrame.Position = UDim2.new(0, 0, -0.1, 0)  -- Positioned above the notification
+    timerFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) -- Darker black for the timer
+    timerFrame.BackgroundTransparency = 0.7
+    timerFrame.BorderSizePixel = 0
+    timerFrame.Parent = notificationFrame
+
+    -- Add rounded corners to the timer frame
+    local timerCorner = Instance.new("UICorner")
+    timerCorner.CornerRadius = UDim.new(0.2, 0)
+    timerCorner.Parent = timerFrame
+
+    -- Create a ProgressBar to represent the countdown
+    local progressBar = Instance.new("Frame")
+    progressBar.Size = UDim2.new(0, 0, 1, 0)
+    progressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 255)  -- Bright cyan for progress
+    progressBar.BorderSizePixel = 0
+    progressBar.Parent = timerFrame
+
+    -- Create a TextLabel for the message
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Size = UDim2.new(1, -10, 1, -10)
+    messageLabel.Position = UDim2.new(0, 5, 0, 5)
+    messageLabel.Text = message
+    messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    messageLabel.TextScaled = true
+    messageLabel.TextStrokeTransparency = 0.3
+    messageLabel.Font = Enum.Font.SourceSansBold
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.TextWrapped = true
+    messageLabel.Parent = notificationFrame
+
+    -- Timer animation
+    local startTime = tick()
+    local endTime = startTime + duration
+    local timerUpdateInterval = 0.1 -- Update every 0.1 seconds
+
+    -- Animate the notification in
+    notificationFrame:TweenPosition(UDim2.new(0.5, 0, 0.85, 0), "Out", "Quad", 0.5, true)
+    
+    -- Update timer progress
+    spawn(function()
+        while tick() < endTime do
+            local elapsedTime = tick() - startTime
+            local progress = math.clamp(elapsedTime / duration, 0, 1)
+            progressBar.Size = UDim2.new(progress, 0, 1, 0)
+            wait(timerUpdateInterval)
+        end
+    end)
+    
+    -- Wait for duration before animating out with spinning effect
+    wait(duration)
+    
+    -- Spin and animate the notification out
+    for i = 1, 36 do
+        notificationFrame.Rotation = i * 10
+        wait(0.05)
+    end
+    notificationFrame:TweenPosition(UDim2.new(0.5, 0, 1.2, 0), "In", "Quad", 0.5, true)
+    
+    -- Wait for animation to complete before deleting
+    wait(0.5)
+    notificationFrame:Destroy()
+end
+
+-- Example usage
+createNotification("Made by @zonkey9070 in yt. Enjoy!", 5) -- Displaʏ ғσя ƨɛcσи∂
+
+-- Create GUI
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local TopBar = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+
+local ChatTab = Instance.new("Frame")
+local ChatTextBox = Instance.new("TextBox")
+local SendButton = Instance.new("TextButton")
+
+-- Setup GUI elements
+ScreenGui.Name = "ChatBypassGUI"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+TopBar.Name = "TopBar"
+TopBar.Parent = MainFrame
+TopBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TopBar.Size = UDim2.new(1, 0, 0, 30)
+
+Title.Name = "Title"
+Title.Parent = TopBar
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.Font = Enum.Font.SourceSans
+Title.Text = "Chat Bypasser"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 24
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Position = UDim2.new(0, 10, 0, 0)
+
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = TopBar
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+CloseButton.Position = UDim2.new(1, -30, 0, 5)
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Font = Enum.Font.SourceSans
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 14
+
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Chat Tab
+ChatTab.Name = "ChatTab"
+ChatTab.Parent = MainFrame
+ChatTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ChatTab.Position = UDim2.new(0, 10, 0, 40)
+ChatTab.Size = UDim2.new(1, -20, 1, -50)
+ChatTab.Visible = true
+
+-- Chat input box
+ChatTextBox.Name = "ChatTextBox"
+ChatTextBox.Parent = ChatTab
+ChatTextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ChatTextBox.Position = UDim2.new(0, 10, 0, 10)
+ChatTextBox.Size = UDim2.new(1, -20, 0.7, -20)
+ChatTextBox.Font = Enum.Font.SourceSans
+ChatTextBox.MultiLine = true
+ChatTextBox.Text = ""
+ChatTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ChatTextBox.TextSize = 14
+ChatTextBox.TextWrapped = true  -- Ensure text wraps within the textbox
+ChatTextBox.TextXAlignment = Enum.TextXAlignment.Left  -- Align text to the left
+
+-- Send button
+SendButton.Name = "SendButton"
+SendButton.Parent = ChatTab
+SendButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+SendButton.Position = UDim2.new(0.3, 0, 0.8, 0)
+SendButton.Size = UDim2.new(0.4, 0, 0.1, 0)
+SendButton.Font = Enum.Font.SourceSans
+SendButton.Text = "Send"
+SendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SendButton.TextSize = 18
+
+SendButton.MouseButton1Click:Connect(function()
+    local text = ChatTextBox.Text
+    local function a()
+        -- Main functionality
+        pcall(function()
+            local tcs = game:GetService("TextChatService")
+            local chat = tcs.ChatInputBarConfiguration.TargetTextChannel
+
+            local function replace(str, find_str, replace_str)
+                local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")
+                return str:gsub(escaped_find_str, replace_str)
+            end
+
+            local letters = {
+                ["a"] = "a", ["A"] = "Α",
+                ["b"] = "b", ["B"] = "Β",
+                ["c"] = "с", ["C"] = "С",
+                ["d"] = "∂", ["D"] = "ԁ",
+                ["e"] = "ε", ["E"] = "Ε",
+                ["f"] = "ẜ", ["F"] = "Ғ",
+                ["g"] = "ɢ", ["G"] = "ԍ",
+                ["h"] = "һ", ["H"] = "Η",
+                ["i"] = "i", ["I"] = "I",
+                ["j"] = "ј", ["J"] = "Ј",
+                ["k"] = "κ", ["K"] = "Κ",
+                ["l"] = "l", ["L"] = "L",
+                ["m"] = "м", ["M"] = "Μ",
+                ["n"] = "n", ["N"] = "Ν",
+                ["o"] = "ο", ["O"] = "Ѳ",
+                ["p"] = "р", ["P"] = "Ρ",
+                ["q"] = "ԛ", ["Q"] = "Ԛ",
+                ["r"] = "r", ["R"] = "R",
+                ["s"] = "ş", ["S"] = "Ṡ",
+                ["t"] = "τ", ["T"] = "Τ",
+                ["u"] = "u", ["U"] = "ᴜ",
+                ["v"] = "ѵ", ["V"] = "Ѵ",
+                ["w"] = "ԝ", ["W"] = "Ԝ",
+                ["x"] = "χ", ["X"] = "Χ",
+                ["y"] = "y", ["Y"] = "Υ",
+                ["z"] = "z ", ["Z"] = "Ζ"
+            }
+
+            local function filter(message)
+                for search, replacement in pairs(letters) do
+                    message = replace(message, search, replacement)
+                end
+                return message
+            end
+
+            local function sendchat(msg)
+                if tcs.ChatVersion == Enum.ChatVersion.LegacyChatService then
+                    game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents").SayMessageRequest:FireServer(msg, "All")
+                else
+                    chat:SendAsync(msg)
+                end
+            end
+
+            -- Placeholder for other functions or GUI events
+            local filteredMessage = filter(text)
+            sendchat(filteredMessage)
+            
+            -- Clear the chat textbox after sending the message
+            ChatTextBox.Text = ""
+        end)
+    end
+
+    a()
+end)
